@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -25,8 +24,43 @@ SECRET_KEY = 'django-insecure-j#^@f)q3+j%v5v10ni$o$(-a104z-oj!o8swok5$60pt$&pyr5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
+CRSF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+]
+
+# CSRF_TRUSTED_ORIGINS=['__all__']
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '1007489318717-4mhi748tuog3e49iujrtr2rka63da0g6.apps.googleusercontent.com',
+            'secret': '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',
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 # Application definition
 
@@ -37,9 +71,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django.contrib.sites',
+
+    # external apps
+    'corsheaders',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
+    #user apps
+    'accounts.apps.AccountsConfig'
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,6 +98,37 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+# Dj-rest-auth settings
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'accounts.serializers.UserSerializer',
+}
+# REST_USE_JWT = True
+# REST_AUTH_SERIALIZERS = {
+#     'TOKEN_SERIALIZER': 'path.to.your.CustomTokenSerializer',
+# }
+
+# Django-allauth settings
+SITE_ID = 1
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+
+
+# REST_AUTH_SERIALIZERS = {
+#     'USER_DETAILS_SERIALIZER': 'accounts.serializers.UserSerializer',
+# }
+#
+# SITE_ID = 1
+
 
 ROOT_URLCONF = 'house_security_system.urls'
 
@@ -69,7 +150,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'house_security_system.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -79,6 +159,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation
@@ -99,7 +180,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -110,7 +190,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
