@@ -48,19 +48,21 @@ CORS_ALLOW_METHODS = [
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': '1007489318717-4mhi748tuog3e49iujrtr2rka63da0g6.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': '640391091582-5id7vu51go25k5k15esej06b9qcshvpg.apps.googleusercontent.com',
+            'secret': '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',
             'key': ''
         },
         'SCOPE': [
             'profile',
             'email',
         ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
+        # 'AUTH_PARAMS': {
+        #     'access_type': 'online',
+        # }
     }
 }
+
+# SOCIALACCOUNT_ADAPTER = 'accounts.views.CustomGoogleOAuth2Adapter'
 
 # Application definition
 
@@ -72,20 +74,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django.contrib.sites',
-
     # external apps
-    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',
+
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
+    'dj_rest_auth.registration',
+
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
     #user apps
-    'accounts.apps.AccountsConfig'
+    'accounts.apps.AccountsConfig',
+    'house.apps.HouseConfig',
 ]
 
 MIDDLEWARE = [
@@ -99,35 +103,41 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+AUTHENTICATION_BACKENDS = (
+    # ...
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+#
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework.authentication.TokenAuthentication',
+    # ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    )
+}
+
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'my-app-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'my-refresh-token',
 }
 
 # Dj-rest-auth settings
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'accounts.serializers.UserSerializer',
-}
-# REST_USE_JWT = True
-# REST_AUTH_SERIALIZERS = {
-#     'TOKEN_SERIALIZER': 'path.to.your.CustomTokenSerializer',
+# REST_AUTH_REGISTER_SERIALIZERS = {
+#     'REGISTER_SERIALIZER': 'accounts.serializers.UserSerializer',
 # }
 
 # Django-allauth settings
 SITE_ID = 1
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_EMAIL_REQUIRED = False
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
 
 
-# REST_AUTH_SERIALIZERS = {
-#     'USER_DETAILS_SERIALIZER': 'accounts.serializers.UserSerializer',
-# }
-#
-# SITE_ID = 1
 
 
 ROOT_URLCONF = 'house_security_system.urls'
@@ -185,7 +195,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Warsaw'
 
 USE_I18N = True
 
