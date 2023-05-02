@@ -1,19 +1,15 @@
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
-
+from rest_framework.response import Response
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.google.views import OAuth2Error
 import jwt
-# from oauthlib.oauth2 import OAuth2Error
-from django.apps import apps
-from allauth.socialaccount.models import SocialApp
 
-# class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Grant, use this
-#     adapter_class = GoogleOAuth2Adapter
-#     callback_url = "http://localhost:8000/accounts/dj-rest-auth/google/"
-#     client_class = OAuth2Client
+import sys
 
+sys.path.append("..")
+from JWT.JWT import create_jwt_pair_for_user
 
 class CustomGoogleOAuth2Adapter(GoogleOAuth2Adapter):
     def complete_login(self, request, app, token, response, **kwargs):
@@ -38,3 +34,16 @@ class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Gran
     adapter_class = CustomGoogleOAuth2Adapter
     callback_url = "http://localhost:8000/accounts/dj-rest-auth/google/"
     client_class = OAuth2Client
+
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        self.serializer = self.get_serializer(data=self.request.GET)
+        self.serializer.is_valid(raise_exception=True)
+        self.login()
+
+        if self.get_response().status_code == 200:
+            return Response(create_jwt_pair_for_user(request.user))
+
+        return self.get_response()
+
+
