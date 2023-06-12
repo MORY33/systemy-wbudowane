@@ -55,6 +55,7 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': [
             'profile',
             'email',
+            'https://www.googleapis.com/auth/user.birthday.read'
         ],
         # 'AUTH_PARAMS': {
         #     'access_type': 'online',
@@ -78,6 +79,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',
+    'rest_framework_simplejwt.token_blacklist',
 
     'django.contrib.sites',
     'allauth',
@@ -88,6 +90,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 
     #user apps
+    'authentication.apps.AuthenticationConfig',
     'accounts.apps.AccountsConfig',
     'house.apps.HouseConfig',
     'JWT.apps.JwtConfig'
